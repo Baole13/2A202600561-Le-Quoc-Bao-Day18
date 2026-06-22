@@ -15,6 +15,11 @@ from src.m4_eval import load_test_set, evaluate_ragas, save_report
 from config import NAIVE_COLLECTION
 
 
+def _safe_preview(text: str, limit: int = 50) -> str:
+    preview = text[:limit]
+    return preview.encode("ascii", errors="ignore").decode("ascii") or "[unicode-text]"
+
+
 def main():
     print("=" * 60)
     print("BASIC RAG BASELINE")
@@ -61,7 +66,7 @@ def main():
         questions.append(item["question"])
         all_contexts.append(contexts)
         ground_truths.append(item["ground_truth"])
-        print(f"  [{i+1}/{len(test_set)}] {item['question'][:50]}...", flush=True)
+        print(f"  [{i+1}/{len(test_set)}] {_safe_preview(item['question'])}...", flush=True)
 
     results = evaluate_ragas(questions, answers, all_contexts, ground_truths)
     print("\nBASIC BASELINE SCORES")
